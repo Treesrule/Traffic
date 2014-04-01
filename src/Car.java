@@ -32,6 +32,7 @@ public class Car {
 	// 20  ->  8.94
 	// 40  -> 17.88
 	// 60  -> 26.82
+	// Miles per hour to dots per step 
 	
 	// Have position and speed -> Want Next position and speed
 	// Problem how to express a(t) and v(t)
@@ -75,13 +76,13 @@ public class Car {
 	// For small enough delta t you do not have to update acceleration
 	// We will need to change this is future versions
 	// Or we could swap at %1 effect (or some such number)
-	public int move(double delta_t){
+	public int move(double time_step){
 	  // Update Acceleration HARD!!!!  
 	  calculateNextAcceleration();
 	  // Update Velocity
-	  velocity += acceleration  * delta_t;
+	  velocity += acceleration  * time_step;
 	  // Update Position
-	  double move_distance = velocity * delta_t;
+	  double move_distance = velocity * time_step;
 	  
 	  position+= move_distance; // Why is this commented out?
 	  // Morover why is this stored in two places
