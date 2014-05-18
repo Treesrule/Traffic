@@ -24,7 +24,7 @@ public class Car {
 	final double SPOTS_TO_MILES     = 0.003;
 	final double HOURS_TO_SECONDS   = 3600;
 	final double SECONDS_TO_HOURS   = 1.0/3600;
-	final double REACTION_TIME      = 3; //TODO Change Reaction time to a field
+	final double REACTION_TIME      = 3; 
 	final double MAX_SIGHT          = 10;
 	// MPH -> M/S conversion Chart
 	// 0   ->  0
@@ -95,12 +95,12 @@ public class Car {
 	
 	private double senseNextRelativeVelocity(){
 		//Get the velocity of the car in front of you
-		double nextStats[] = Main.getNextStats(position);
-		return nextStats[Main.VELOCITY_POS];
+		double nextStats[] = OldMain.getNextStats(position);
+		return nextStats[OldMain.VELOCITY_POS];
 	}
 	private int senseNextRelativePosition() {
-		double nextStats[] = Main.getNextStats(position);
-		return (int) nextStats[Main.LOC_POS];
+		double nextStats[] = OldMain.getNextStats(position);
+		return (int) nextStats[OldMain.LOC_POS];
 	}
 	
 	//Depreciated function Break
@@ -123,6 +123,11 @@ public class Car {
 		double r_velocity = senseNextRelativeVelocity();
 		int r_position    = senseNextRelativePosition();		
 		double n_velocity = velocity - r_velocity;
+		// Calculate time you need to get to zero speed
+		// Then calculate path
+		// v_f = 0, v_i = v_0, t_f = ?, t_0 = 0, x_0 = dx, x_f = v_car * gap_time
+		// vf^2 - vi^2 = 2a¶x
+		// v_0^2/2dx
 		double distance   = n_velocity * REACTION_TIME; 
 		if(r_velocity <= 0 || n_velocity * MAX_SIGHT * MILES_TO_SPOTS > r_position){
 			if(velocity >= pref_speed) 
