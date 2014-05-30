@@ -1,3 +1,4 @@
+package Simulations;
 
 
 /* Benjamin Kadish
@@ -8,8 +9,16 @@
 // A Car Node is like a car except in knows the next and previous car in its lane
 // I think this should solve some of the current data management problems 
 // Should we decouple the calculation of the movement and the movement?
+// 
 
 // Need to define units of the simulation 
+
+
+// TODO Generate a new control system which does not need to force the zero velocity
+// TODO Create variability in Thresholds, Reactions and vision this should be easy for the class 
+// but slightly harder for the generating class
+// TODO Add the ability to have multiple lanes
+// TODO Add visuals 
 
 public class CarNode{
 	
@@ -17,8 +26,8 @@ public class CarNode{
 	private double position, velocity, acceleration;
 	private double pref_velocity, pref_acceleration;
 	
-	private static final double REACTION_TIME      = 3; 
-	private static final double MAX_SIGHT          = 10;
+	private static final double REACTION_TIME      = 3.00; 
+	private static final double MAX_SIGHT          = 10.0;
 	private static final double POSITION_THRESHOLD = 0.03;
 	private static final double VELOCITY_THRESHOLD = 0.05;
 	
@@ -42,7 +51,7 @@ public class CarNode{
 		
 		/*double dx         = find_dx();
 		double dv         = find_dv();
-		acceleration = calculateNextAcceleration(dx,dv);*/
+		acceleration = calculateNextAcceleration(dx,dv,times_step);*/
 		
 	}
 	
@@ -51,17 +60,18 @@ public class CarNode{
 	// behaviour when a car is in front of them 
 	// @Param dx distance between this car and the next one
 	// @Param dv velocity difference between the current car and the next car
-	public double calculateNextAcceleration(double dx, double dv){
-		if(reactionNeeded(dx,dv)) return calculateReaction(dx,dv);
-		return freeAcceleration();
+	public double calculateNextAcceleration(double dx, double dv,double time_step){
+		if(reactionNeeded(dx,dv)) return calculateReaction(dx,dv,time_step);
+		
+		return freeAcceleration();	
 		
 	}
 
-	//After the car has moved udpate the acceleration
-	public void updateAcceleration(){
+	//After the car has moved update the acceleration
+	public void updateAcceleration(double time_step){
 		double dx         = find_dx();
 		double dv         = find_dv();
-		if(reactionNeeded(dx,dv)) acceleration = calculateReaction(dx,dv);
+		if(reactionNeeded(dx,dv)) acceleration = calculateReaction(dx,dv,time_step);
 		else acceleration = freeAcceleration();	
 	}
 	
@@ -79,9 +89,16 @@ public class CarNode{
 
 	// Calculate how fast you should break if you are close to 	the car in front of you
 	// TODO Handle the case where the car has an error
-	private double calculateReaction(double dx, double dv) {
+	private double calculateReaction(double dx, double dv,double time_step) {
 		double goal_position = dx - velocity*REACTION_TIME;
-		if(Math.abs(goal_position)<POSITION_THRESHOLD) return 0;
+		if(goal_position < POSITION_THRESHOLD){
+			// Clamp
+			// the current problem with this solution is that its not a directive to the car 
+			// such is life 
+			velocity = next.getVelocity();
+			return 0;
+		}
+		if( goal_position < 0) return 0;
 		return constant_accleration(dv,goal_position);
 	}
 
@@ -125,6 +142,18 @@ public class CarNode{
 		next = car;
 	}
 	
+	//The following methods are for debugging
+	public void setPosition(double position){
+		this.position = position;
+	}
+	
+	public void setVeloctiy(double velocity){
+		this.velocity = velocity;
+	}
+	
+	public void setAcceration(double acceleration){
+		this.acceleration = acceleration;
+	}
 	//Set the previous car field
 	public void setPrev(CarNode car){
 		prev = car;

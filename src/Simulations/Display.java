@@ -1,3 +1,4 @@
+package Simulations;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
